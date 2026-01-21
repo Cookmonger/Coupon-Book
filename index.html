@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Private Coupon Book</title>
+
+<style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f6f6f6;
+    margin: 0;
+    padding: 20px;
+  }
+  .container {
+    max-width: 420px;
+    margin: auto;
+  }
+  h1 {
+    text-align: center;
+  }
+  .card {
+    background: white;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  }
+  button {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+  }
+  .redeem {
+    background: #111;
+    color: white;
+  }
+  .redeemed {
+    background: #bbb;
+    color: #444;
+    cursor: not-allowed;
+  }
+  input {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+  }
+</style>
+</head>
+
+<body>
+<div class="container">
+
+  <div id="lockScreen" class="card">
+    <h1>🔒 Private Access</h1>
+    <p>Enter phone number to unlock</p>
+    <input type="tel" id="phoneInput" placeholder="Phone Number" />
+    <button onclick="unlock()">Unlock</button>
+    <p id="error" style="color:red;"></p>
+  </div>
+
+  <div id="couponBook" style="display:none;">
+    <h1>🎁 Coupon Book</h1>
+    <div id="coupons"></div>
+  </div>
+
+</div>
+
+<script>
+const CORRECT_PHONE = "5106767447";
+
+const couponList = [
+  "Coupon 1",
+  "Coupon 2",
+  "Coupon 3",
+  "Coupon 4",
+  "Coupon 5",
+  "Coupon 6",
+  "Coupon 7",
+  "Coupon 8",
+  "Coupon 9",
+  "Coupon 10",
+  "Coupon 11",
+  "Coupon 12",
+  "Coupon 13",
+  "Coupon 14",
+  "Coupon 15",
+  "Coupon 16",
+  "Coupon 17",
+  "Coupon 18",
+  "Coupon 19",
+  "Coupon 20"
+];
+
+function unlock() {
+  const input = document.getElementById("phoneInput").value.replace(/\D/g,'');
+  if (input === CORRECT_PHONE) {
+    document.getElementById("lockScreen").style.display = "none";
+    document.getElementById("couponBook").style.display = "block";
+    loadCoupons();
+  } else {
+    document.getElementById("error").textContent = "Incorrect number.";
+  }
+}
+
+function loadCoupons() {
+  const container = document.getElementById("coupons");
+  container.innerHTML = "";
+
+  couponList.forEach((name, index) => {
+    const redeemed = localStorage.getItem("coupon_" + index) === "true";
+
+    const card = document.createElement("div");
+    card.className = "card";
+
+    const title = document.createElement("h3");
+    title.textContent = name;
+
+    const button = document.createElement("button");
+    button.textContent = redeemed ? "Redeemed" : "Redeem";
+    button.className = redeemed ? "redeemed" : "redeem";
+    button.disabled = redeemed;
+
+    button.onclick = () => {
+      if (confirm("Redeem this coupon?")) {
+        localStorage.setItem("coupon_" + index, "true");
+        loadCoupons();
+      }
+    };
+
+    card.appendChild(title);
+    card.appendChild(button);
+    container.appendChild(card);
+  });
+}
+
+/* OPTIONAL RESET (uncomment if needed)
+localStorage.clear();
+*/
+</script>
+</body>
+</html>
